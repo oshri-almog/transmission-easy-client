@@ -1,10 +1,11 @@
 import React from "react";
 import {observer} from "mobx-react";
-import Select, {Option} from "rc-select";
+import Select, {Option, OptGroup} from "rc-select";
 import ComponentLoader from "./ComponentLoader";
 import getLogger from "../tools/getLogger";
 import VisiblePage from "./VisiblePage";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import getLabelHue from "../tools/getLabelHue";
 
 const logger = getLogger('Menu');
 
@@ -214,8 +215,10 @@ class LabelSelect extends React.PureComponent {
   render() {
     const selectedLabel = this.rootStore.config.selectedLabel;
 
-    let defaultValue = null;
-    const options = this.rootStore.torrentList.filters.map(({label, custom: isCustom}) => {
+    let value = undefined;
+    const customOptions = [];
+    const tagOptions = [];
+    this.rootStore.torrentList.filters.forEach(({label, custom: isCustom}) => {
       const id = JSON.stringify({label, custom: isCustom});
 
       let text = null;
@@ -229,34 +232,53 @@ class LabelSelect extends React.PureComponent {
         text = label;
       }
 
-      let dataImage = null;
       let image = null;
       if (isCustom) {
-        dataImage = label;
         image = (
-          <span className="image" data-image={dataImage}/>
+          <span className="image" data-image={label}/>
+        );
+      } else {
+        image = (
+          <span className="image tag-dot" style={{'--tag-hue': String(getLabelHue(label))}}/>
         );
       }
 
       if (selectedLabel.id === id) {
-        defaultValue = id;
+        value = id;
       }
 
-      return (
+      const option = (
         <Option key={id} value={id}>
           {image}
           <span title={text}>{text}</span>
         </Option>
       );
+
+      if (isCustom) {
+        customOptions.push(option);
+      } else {
+        tagOptions.push(option);
+      }
     });
+
+    let tagGroup = null;
+    if (tagOptions.length) {
+      tagGroup = (
+        <OptGroup key="tags" label={chrome.i18n.getMessage('OV_COL_TAGS')}>
+          {tagOptions}
+        </OptGroup>
+      );
+    }
 
     return (
       <li className="select">
-        <Select defaultValue={defaultValue} onChange={this.handleChange}
+        <Select value={value} onChange={this.handleChange}
                 showSearch={false}
                 optionLabelProp="children"
+                dropdownClassName="label-select-dropdown"
         >
-          {options}
+          {customOptions}
+          {tagGroup}
         </Select>
       </li>
     );

@@ -29,6 +29,8 @@ import formatBytes from "../tools/formatBytes";
  * @property {number} completedTime
  * @property {string|undefined} directory
  * @property {string|undefined} magnetLink
+ * @property {string[]} labels
+ * @property {*} labelsStr
  * @property {function} start
  * @property {function} stop
  * @property {*} remaining
@@ -82,6 +84,7 @@ const TorrentStore = types.model('TorrentStore', {
   completedTime: types.number,
   directory: types.maybe(types.string),
   magnetLink: types.maybe(types.string),
+  labels: types.optional(types.array(types.string), []),
 }).views((/**TorrentStore*/self) => {
   return {
     start() {
@@ -151,6 +154,9 @@ const TorrentStore = types.model('TorrentStore', {
       } else {
         return fecha.format(self.addedTime * 1000, 'YYYY-MM-DD HH:mm:ss');
       }
+    },
+    get labelsStr() {
+      return self.labels.join(', ');
     },
     get completedTimeStr() {
       if (!self.completedTime) {

@@ -120,6 +120,9 @@ const config = {
         }
       },
       {from: './src/assets/icons', to: './assets/icons'},
+      // page icons, needed for Edge's "Install this site as an app"
+      {from: './src/assets/favicon/favicon.ico', to: './favicon.ico'},
+      {from: './src/assets/favicon/favicon.png', to: './favicon.png'},
       {from: './src/_locales', to: './_locales'},
     ]),
     new MiniCssExtractPlugin({

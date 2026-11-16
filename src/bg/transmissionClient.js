@@ -47,7 +47,7 @@ class TransmissionClient {
     const now = Math.trunc(Date.now() / 1000);
 
     let isRecently = false;
-    if (!force && now - this.torrentsResponseTime < 60) {
+    if (!force && now - this.torrentsResponseTime < 60 && now - (this.torrentsFullResponseTime || 0) < 60) {
       isRecently = true;
     }
 
@@ -61,12 +61,17 @@ class TransmissionClient {
           'peersSendingToUs', 'peersGettingFromUs', 'queuePosition',
           'addedDate', 'doneDate', 'downloadDir',
           'recheckProgress', 'status', 'error',
-          'errorString', 'trackerStats', 'magnetLink'
+          'errorString', 'trackerStats', 'magnetLink',
+          'labels'
         ],
         ids: isRecently ? 'recently-active' : undefined
       }
     }, safeParser).then((response) => {
       this.torrentsResponseTime = now;
+      if (!isRecently) {
+        // "recently-active" misses edits like label changes, so do a full fetch at least once a minute
+        this.torrentsFullResponseTime = now;
+      }
       const previousActiveTorrentIds = this.bgStore.client.activeTorrentIds;
 
       if (isRecently) {
@@ -318,6 +323,30 @@ class TransmissionClient {
     }).then(this.thenUpdateTorrents);
   }
 
+  setLabels(ids, labels) {
+    const settings = this.bgStore.client.settings;
+    if (settings && !settings.supportsLabels) {
+      return Promise.reject(new ErrorWithCode('Tags need Transmission 3.00 or newer', 'LABELS_NOT_SUPPORTED'));
+    }
+    return this.sendAction({
+      method: 'torrent-set',
+      arguments: {ids, labels}
+    }).then((result) => {
+      // a label change does not mark a torrent as "recently active", so force a full refresh
+      return this.updateTorrents(true).then(() => {
+        // old daemons ignore unknown torrent-set keys and still answer "success"
+        const notApplied = ids.some((id) => {
+          const torrent = this.bgStore.client.torrents.get(id);
+          return torrent && JSON.stringify(torrent.labels.slice(0).sort()) !== JSON.stringify(labels.slice(0).sort());
+        });
+        if (notApplied) {
+          throw new ErrorWithCode('Tags were not saved. Tags need Transmission 3.00 or newer', 'LABELS_NOT_SUPPORTED');
+        }
+        return result;
+      });
+    });
+  }
+
   torrentSetLocation(ids, location) {
     return this.sendAction({
       method: 'torrent-set-location',
@@ -561,6 +590,7 @@ class TransmissionClient {
     const completedTime = torrent.doneDate;
     const directory = torrent.downloadDir;
     const magnetLink = torrent.magnetLink;
+    const labels = Array.isArray(torrent.labels) ? torrent.labels.filter(label => typeof label === 'string' && label) : [];
 
     return {
       id, statusCode, errorCode, errorString,
@@ -569,7 +599,7 @@ class TransmissionClient {
       uploadSpeed, downloadSpeed, eta,
       activePeers, peers, activeSeeds, seeds,
       order, addedTime, completedTime, directory,
-      magnetLink
+      magnetLink, labels
     };
   };
 
@@ -598,6 +628,7 @@ class TransmissionClient {
       altUploadSpeedLimit: settings['alt-speed-up'],
       downloadDir: settings['download-dir'],
       downloadDirFreeSpace: settings['download-dir-free-space'],
+      rpcVersion: typeof settings['rpc-version'] === 'number' ? settings['rpc-version'] : undefined,
     };
   };
 

@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {contextMenu} from 'react-contexify';
 import RootStoreCtx from "../tools/RootStoreCtx";
+import getLabelHue from "../tools/getLabelHue";
 
 @observer
 class TorrentListTableItem extends React.PureComponent {
@@ -51,6 +52,7 @@ class TorrentListTableItem extends React.PureComponent {
 
   handleDblClick = (e) => {
     e.preventDefault();
+    if (e.target && e.target.closest && e.target.closest('.tag')) return;
     this.rootStore.createFileList(this.torrentStore.id);
   };
 
@@ -71,6 +73,13 @@ class TorrentListTableItem extends React.PureComponent {
         onHide: onHide,
       }
     });
+  };
+
+  handleLabelClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const label = e.currentTarget.dataset.label;
+    this.rootStore.config.setSelectedLabel(label, false);
   };
 
   handleContextMenuHide = () => {
@@ -226,6 +235,21 @@ class TorrentListTableItem extends React.PureComponent {
           columns.push(
             <td key={name} className={name}>
               <div>{torrent.shared / 1000}</div>
+            </td>
+          );
+          break;
+        }
+        case 'labels': {
+          const labelsStr = torrent.labelsStr;
+          columns.push(
+            <td key={name} className={name}>
+              <div title={labelsStr}>
+                {torrent.labels.map(label => (
+                  <span key={label} className="tag" data-label={label}
+                        style={{'--tag-hue': String(getLabelHue(label))}}
+                        onClick={this.handleLabelClick}>{label}</span>
+                ))}
+              </div>
             </td>
           );
           break;

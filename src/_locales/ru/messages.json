@@ -327,9 +327,6 @@
         "originalKey": "DLG_RSSDOWNLOADER_35",
         "modifed": 1
     },
-
-
-
     "torrentAdded": {
         "message": "Торрент добавлен!"
     },
@@ -531,5 +528,26 @@
     },
     "shortName": {
         "message": "Короткое имя"
+    },
+    "OV_COL_TAGS": {
+        "message": "Метки"
+    },
+    "editTags": {
+        "message": "Метки…"
+    },
+    "editTagsText": {
+        "message": "Метки через запятую. Нажмите на метку ниже, чтобы добавить или убрать её."
+    },
+    "theme": {
+        "message": "Тема"
+    },
+    "themeAuto": {
+        "message": "Авто (как в системе)"
+    },
+    "themeLight": {
+        "message": "Светлая"
+    },
+    "themeDark": {
+        "message": "Тёмная"
     }
 }

@@ -13,6 +13,7 @@ import storageSet from "../tools/storageSet";
 import storageRemove from "../tools/storageRemove";
 import {migrateConfig} from "../tools/loadConfig";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import applyTheme from "../tools/applyTheme";
 
 const logger = getLogger('Options');
 
@@ -278,6 +279,14 @@ class UiOptions extends OptionsPage {
     return (
       <div className="page main">
         <h2>{chrome.i18n.getMessage('optMain')}</h2>
+        <label>
+          <span>{chrome.i18n.getMessage('theme')}</span>
+          <select onChange={this.handleRadioChange} name="theme" defaultValue={this.configStore.theme}>
+            <option value="auto">{chrome.i18n.getMessage('themeAuto')}</option>
+            <option value="light">{chrome.i18n.getMessage('themeLight')}</option>
+            <option value="dark">{chrome.i18n.getMessage('themeDark')}</option>
+          </select>
+        </label>
         <label>
           <span>{chrome.i18n.getMessage('showFreeSpace')}</span>
           <input onChange={this.handleChange} name="showFreeSpace" type="checkbox" defaultChecked={this.configStore.showFreeSpace}/>
@@ -681,6 +690,8 @@ class NotFound extends React.PureComponent {
 }
 
 const rootStore = window.rootStore = RootStore.create();
+
+applyTheme(rootStore);
 
 ReactDOM.render(
   <RootStoreCtx.Provider value={rootStore}>

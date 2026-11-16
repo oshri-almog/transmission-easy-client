@@ -11,6 +11,7 @@ const byColumnMap = {
   added: 'addedTime',
   completed: 'completedTime',
   status: 'statusCode',
+  labels: 'labelsStr',
 };
 
 /**
@@ -27,9 +28,26 @@ const TorrentListStore = types.compose('TorrentListStore', ListSelectStore, type
 
 })).views((self) => {
   return {
+    get allLabels() {
+      /**@type RootStore*/const rootStore = getRoot(self);
+      const labels = new Set();
+      for (const torrent of rootStore.client.torrents.values()) {
+        torrent.labels.forEach(label => labels.add(label));
+      }
+      return Array.from(labels).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    },
     get filters() {
+      /**@type RootStore*/const rootStore = getRoot(self);
       const result = [];
       customLabels.forEach(label => result.push({label, custom: true}));
+
+      const labels = self.allLabels.slice(0);
+      // keep the selected tag in the list even if no torrent has it right now
+      const selectedLabel = rootStore.config.selectedLabel;
+      if (!selectedLabel.custom && labels.indexOf(selectedLabel.label) === -1) {
+        labels.push(selectedLabel.label);
+      }
+      labels.forEach(label => result.push({label, custom: false}));
       return result;
     },
     get filteredTorrents() {
@@ -38,7 +56,11 @@ const TorrentListStore = types.compose('TorrentListStore', ListSelectStore, type
 
       const result = [];
       for (const torrent of rootStore.client.torrents.values()) {
-        if (filter.custom) {
+        if (!filter.custom) {
+          if (torrent.labels.indexOf(filter.label) !== -1) {
+            result.push(torrent);
+          }
+        } else {
           switch (filter.label) {
             case 'ALL': {
               result.push(torrent);

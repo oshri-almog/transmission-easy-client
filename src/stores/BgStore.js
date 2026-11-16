@@ -1,9 +1,8 @@
 import {flow, types} from "mobx-state-tree";
-import ConfigStore, {configKeys, defaultFileListColumnList, defaultTorrentListColumnList} from "./ConfigStore";
+import ConfigStore, {configKeys, normalizeColumnsConfig} from "./ConfigStore";
 import getLogger from "../tools/getLogger";
 import loadConfig from "../tools/loadConfig";
 import ClientStore from "./ClientStore";
-import mergeColumns from "../tools/mergeColumns";
 
 const logger = getLogger('BgStore');
 
@@ -24,17 +23,8 @@ const BgStore = types.model('BgStore', {
       try {
         const config = yield loadConfig(configKeys);
 
-        [
-          ['filesColumns', defaultFileListColumnList],
-          ['torrentColumns', defaultTorrentListColumnList]
-        ].forEach(([key, defColumns]) => {
-          if (config[key]) {
-            try {
-              mergeColumns(config[key], defColumns);
-            } catch (err) {
-              logger.error(`mergeColumns ${key} error, use default`, err);
-            }
-          }
+        normalizeColumnsConfig(config, (key, err) => {
+          logger.error(`mergeColumns ${key} error, use default`, err);
         });
 
         self.config = {};

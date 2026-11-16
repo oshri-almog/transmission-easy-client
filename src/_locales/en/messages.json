@@ -314,9 +314,6 @@
         "originalKey": "DLG_RSSDOWNLOADER_35",
         "modifed": 1
     },
-
-
-
     "torrentAdded": {
         "message": "Torrent was added!"
     },
@@ -518,5 +515,26 @@
     },
     "shortName": {
         "message": "Short name"
+    },
+    "OV_COL_TAGS": {
+        "message": "Tags"
+    },
+    "editTags": {
+        "message": "Tags…"
+    },
+    "editTagsText": {
+        "message": "Tags (comma-separated). Click a tag below to add or remove it."
+    },
+    "theme": {
+        "message": "Theme"
+    },
+    "themeAuto": {
+        "message": "Auto (follow system)"
+    },
+    "themeLight": {
+        "message": "Light"
+    },
+    "themeDark": {
+        "message": "Dark"
     }
 }

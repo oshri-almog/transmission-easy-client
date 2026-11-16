@@ -84,6 +84,24 @@ class TorrentMenuBody extends ContextMenuBody {
     this.torrentListStore.resetSelectedIds();
   };
 
+  handleEditLabels = ({event: e, props}) => {
+    const selectedIds = this.torrentListStore.selectedIds.slice(0);
+    const torrents = selectedIds.map(id => this.rootStore.client.torrents.get(id)).filter(Boolean);
+    if (!torrents.length) return;
+
+    const [first, ...other] = torrents;
+    const commonLabels = first.labels.filter((label) => {
+      return other.every(torrent => torrent.labels.indexOf(label) !== -1);
+    });
+
+    this.rootStore.createDialog({
+      type: 'labels',
+      torrentIds: torrents.map(torrent => torrent.id),
+      commonLabels
+    });
+    this.torrentListStore.resetSelectedIds();
+  };
+
   handleCopyMagnetUrl = ({event: e, props}) => {
     const torrent = this.firstTorrent;
     if (!torrent) return;
@@ -228,6 +246,14 @@ class TorrentMenuBody extends ContextMenuBody {
             <Item onClick={this.handleMove}>{chrome.i18n.getMessage('move')}</Item>
           );
 
+          let editLabels = null;
+          const clientSettings = this.rootStore.client.settings;
+          if (!clientSettings || clientSettings.supportsLabels) {
+            editLabels = (
+              <Item onClick={this.handleEditLabels}>{chrome.i18n.getMessage('editTags')}</Item>
+            );
+          }
+
           const reannounce = (
             <Item onClick={this.handleReannounce}>{chrome.i18n.getMessage('reannounce')}</Item>
           );
@@ -237,6 +263,7 @@ class TorrentMenuBody extends ContextMenuBody {
               {rename}
               {getMagnet}
               {move}
+              {editLabels}
               {reannounce}
             </Submenu>
           );

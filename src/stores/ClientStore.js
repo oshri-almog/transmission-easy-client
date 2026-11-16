@@ -42,8 +42,13 @@ const SettingsStore = types.model('SettingsStore', {
   altUploadSpeedLimit:types.number,
   downloadDir: types.string,
   downloadDirFreeSpace: types.maybe(types.number),
+  rpcVersion: types.maybe(types.number),
 }).views((self) => {
   return {
+    get supportsLabels() {
+      // labels arrived in Transmission 3.00 (rpc-version 16); unknown version -> assume yes
+      return self.rpcVersion === undefined || self.rpcVersion >= 16;
+    },
     get downloadSpeedLimitStr() {
       return speedToStr(self.downloadSpeedLimit * 1024);
     },
@@ -104,6 +109,7 @@ const SettingsStore = types.model('SettingsStore', {
  * @property {function} reannounce
  * @property {function} rename
  * @property {function} torrentSetLocation
+ * @property {function} setLabels
  * @property {function} updateTorrentList
  * @property {function} syncClient
  */
@@ -284,6 +290,9 @@ const ClientStore = types.model('ClientStore', {
     },
     rename(ids, path, name){
       return callApi({action: 'rename', ids: ids, path, name}).then(...exceptionLog()).then(thenSyncClient);
+    },
+    setLabels(ids, labels){
+      return callApi({action: 'setLabels', ids: ids, labels}).then(...exceptionLog()).then(thenSyncClient);
     },
     torrentSetLocation(ids, location){
       return callApi({action: 'torrentSetLocation', ids: ids, location}).then(...exceptionLog()).then(thenSyncClient);

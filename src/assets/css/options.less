@@ -243,3 +243,81 @@ ol.help li {
     width: 100%;
     max-width: 671px;
 }
+
+// ---- dark theme (html[data-theme="dark"], see tools/applyTheme.js) ----
+@opt-bg: #1f2023;
+@opt-border: #3b3e44;
+@opt-text: #e2e3e5;
+
+html[data-theme="dark"] {
+    background-color: @opt-bg;
+
+    body {
+        background-color: @opt-bg;
+        color: @opt-text;
+    }
+
+    a,
+    div.container > .content > .left a.active {
+        color: #7fb0ff;
+    }
+
+    div.container > .content > .left a {
+        color: @opt-text;
+        border-bottom-color: @opt-border;
+    }
+
+    div.container > .content > .left a.active,
+    div.container > .content > .left a:hover {
+        border-bottom-color: #6a6e76;
+    }
+
+    h2, h3 {
+        border-bottom-color: @opt-border;
+    }
+
+    div.info {
+        background-color: #1d2a38;
+        border-color: #2f4a63;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    textarea,
+    select {
+        background-color: #1a1b1e;
+        color: @opt-text;
+        border: 1px solid #4a4d54;
+        border-radius: 2px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    button,
+    input.button {
+        background-color: #3a3d43;
+        color: @opt-text;
+        border: 1px solid #555961;
+        border-radius: 3px;
+    }
+
+    input.button:hover {
+        background-color: #45484f;
+        border-color: #6a6e76;
+    }
+
+    input[type="button"]:disabled,
+    input[type="submit"]:disabled,
+    button:disabled,
+    input.button:disabled {
+        opacity: 0.45;
+        cursor: default;
+        background-color: #3a3d43;
+        border-color: #555961;
+    }
+
+    .selectColor {
+        border-color: #6a6e76;
+    }
+}

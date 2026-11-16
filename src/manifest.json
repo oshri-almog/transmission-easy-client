@@ -26,5 +26,6 @@
     "description": "__MSG_appDesc__",
     "default_locale": "en",
     "options_page": "options.html",
-    "version": "2.2.2"
+    "version": "2.3.0",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyBe2ziEcpa48UibISL5X0a12sljQ9Tvz38z2EGRWbGokz91CpnVgvt8pUM3BflnBKFYYZETi/k/ipy+sOmoiWSpEBF9Yjvkp9mfePW8DJQ5aAAxWC/qjv3/0sBZT0lTSgoC2S6ktDZVC/cN7vFO3nl2dA/QOgqOEHCy4F8paCad1OQXbp9fst2X6YGZmNzvECbe/flgkoq+FsHraXeYbOCn76gbUH13FdmcHmY6VfPaZFJu2dNf73IwSIW1zGUJm48gIHqZRNbcp4nU+3g4JbC/NRFNp4NqOqhy3nWrYeMl7DPj7/SSRYDMtgmyPasPucKtaviVz9zfGueEmyZv/1QIDAQAB"
 }

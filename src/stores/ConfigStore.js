@@ -1,11 +1,12 @@
 import {getPropertyMembers, resolveIdentifier, types} from "mobx-state-tree";
 import storageSet from "../tools/storageSet";
+import mergeColumns from "../tools/mergeColumns";
 
 const url = require('url');
 
 const defaultTorrentListColumnList = [
   {column: 'checkbox', display: 1, order: 0, width: 18, lang: 'selectAll'},
-  {column: 'name', display: 1, order: 1, width: 204, lang: 'OV_COL_NAME'},
+  {column: 'name', display: 1, order: 1, width: 160, lang: 'OV_COL_NAME'},
   {column: 'order', display: 0, order: 1, width: 24, lang: 'OV_COL_ORDER'},
   {column: 'size', display: 1, order: 1, width: 68, lang: 'OV_COL_SIZE'},
   {column: 'remaining', display: 0, order: 1, width: 64, lang: 'OV_COL_REMAINING'},
@@ -21,7 +22,7 @@ const defaultTorrentListColumnList = [
   {column: 'downloaded', display: 0, order: 1, width: 64, lang: 'OV_COL_DOWNLOADED'},
   {column: 'shared', display: 0, order: 1, width: 64, lang: 'OV_COL_SHARED'},
   // {column: 'avail', display: 0, order: 1, width: 60, lang: 'OV_COL_AVAIL'},
-  // {column: 'label', display: 0, order: 1, width: 100, lang: 'OV_COL_LABEL'},
+  {column: 'labels', display: 1, order: 1, width: 70, lang: 'OV_COL_TAGS'},
   {column: 'added', display: 0, order: 1, width: 130, lang: 'OV_COL_DATE_ADDED'},
   {column: 'completed', display: 0, order: 1, width: 130, lang: 'OV_COL_DATE_COMPLETED'},
   {column: 'actions', display: 1, order: 0, width: 40, lang: 'Actions'}
@@ -126,6 +127,7 @@ const SelectedLabelStore = types.model('SelectedLabelStore', {
  * @property {boolean} [putDefaultPathInContextMenu]
  * @property {string} [badgeColor]
  * @property {boolean} [showFreeSpace]
+ * @property {string} [theme]
  * @property {FolderStore[]} folders
  * @property {TorrentsColumnStore[]} [torrentColumns]
  * @property {FilesColumnStore[]} [filesColumns]
@@ -181,6 +183,8 @@ const ConfigStore = types.model('ConfigStore', {
   badgeColor: types.optional(types.string, '0,0,0,0.40'),
 
   showFreeSpace: types.optional(types.boolean, true),
+
+  theme: types.optional(types.enumeration(['auto', 'light', 'dark']), 'auto'),
 
   folders: types.array(FolderStore),
 
@@ -290,6 +294,7 @@ const ConfigStore = types.model('ConfigStore', {
           keyValue[key] = newValue;
         }
       });
+      normalizeColumnsConfig(keyValue);
       self.setKeyValue(keyValue);
     }
   };
@@ -377,7 +382,41 @@ function moveItems(array, items, index) {
 }
 
 
+/**
+ * Bring saved column lists up to date with the current defaults: add columns
+ * that are new in this version (e.g. Tags) and drop unknown ones. Mutates config.
+ * Used both when the config is loaded and when it changes in storage (e.g. a
+ * backup from an older version is restored).
+ */
+function normalizeColumnsConfig(config, onError) {
+  // The Tags column is new: when a saved layout doesn't have it yet, take its
+  // width from the Name column so the table still fits the 800px popup.
+  if (Array.isArray(config.torrentColumns) && !config.torrentColumns.some(c => c && c.column === 'labels')) {
+    const labelsColumn = defaultTorrentListColumnList.find(c => c.column === 'labels');
+    const nameColumn = config.torrentColumns.find(c => c && c.column === 'name');
+    if (labelsColumn && nameColumn && typeof nameColumn.width === 'number') {
+      nameColumn.width = Math.min(nameColumn.width, Math.max(120, nameColumn.width - labelsColumn.width));
+    }
+  }
+
+  [
+    ['filesColumns', defaultFileListColumnList],
+    ['torrentColumns', defaultTorrentListColumnList]
+  ].forEach(([key, defColumns]) => {
+    if (Array.isArray(config[key])) {
+      try {
+        mergeColumns(config[key], defColumns);
+      } catch (err) {
+        onError && onError(key, err);
+        delete config[key];
+      }
+    }
+  });
+
+  return config;
+}
+
 const configKeys = Object.keys(getPropertyMembers(ConfigStore).properties);
 
 export default ConfigStore;
-export {configKeys, SelectedLabelStore, defaultTorrentListColumnList, defaultFileListColumnList};
+export {configKeys, SelectedLabelStore, defaultTorrentListColumnList, defaultFileListColumnList, normalizeColumnsConfig};

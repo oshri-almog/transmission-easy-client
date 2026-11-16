@@ -302,9 +302,6 @@
         "originalKey": "DLG_RSSDOWNLOADER_35",
         "modifed": 1
     },
-
-
-
     "torrentAdded": {
         "message": "洪流加入!"
     },
@@ -506,5 +503,26 @@
     },
     "shortName": {
         "message": "简称"
+    },
+    "OV_COL_TAGS": {
+        "message": "标签"
+    },
+    "editTags": {
+        "message": "标签…"
+    },
+    "editTagsText": {
+        "message": "标签（用逗号分隔）。点击下方标签可添加或移除。"
+    },
+    "theme": {
+        "message": "主题"
+    },
+    "themeAuto": {
+        "message": "自动（跟随系统）"
+    },
+    "themeLight": {
+        "message": "浅色"
+    },
+    "themeDark": {
+        "message": "深色"
     }
 }

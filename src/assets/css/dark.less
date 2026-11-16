@@ -1,0 +1,300 @@
+// Dark theme for the popup / tab view. Applied when <html data-theme="dark">
+// (see tools/applyTheme.js). Every rule overrides a light rule in stylesheet.less / tags.less.
+
+@bg: #1f2023;
+@surface: #2a2c30;
+@row-alt: #25272b;
+@border: #3b3e44;
+@text: #e2e3e5;
+@muted: #9a9ca1;
+@accent: #3875d7;
+
+html[data-theme="dark"] {
+    background-color: @bg;
+
+    body {
+        background-color: @bg;
+        color: @text;
+    }
+
+    a {
+        color: #7fb0ff;
+    }
+
+    // invert dark monochrome icons so they show on a dark background
+    .menu a.refresh,
+    div.file-list div.bottom-menu a.update,
+    div.file-list div.bottom-menu a.close,
+    .openInTab,
+    table th .arrow,
+    .rc-select .rc-select-selection .rc-select-arrow .rc-select-arrow-icon {
+        filter: invert(90%);
+    }
+
+    // these elements are inverted as a whole, so give them a pre-inverted hover
+    // border (#aea99f renders as about #5a5e66) and no background tint
+    .menu a.btn.refresh:hover,
+    div.file-list div.bottom-menu a.update:hover,
+    div.file-list div.bottom-menu a.close:hover {
+        border-color: #aea99f;
+        background-color: transparent;
+    }
+
+    // top menu
+    .menu {
+        li.separate {
+            border-left-color: #55585e;
+        }
+
+        a.btn {
+            border-color: transparent;
+
+            &:hover {
+                border-color: #5a5e66;
+                background-color: rgba(255, 255, 255, 0.06);
+            }
+        }
+
+        a.alt_speed.active {
+            box-shadow: inset 0 0 2px 0 #fff;
+        }
+    }
+
+    // tables
+    table thead {
+        background-image: linear-gradient(to top, #2c2e33 30%, #3a3d43 92%);
+        color: @text;
+
+        th {
+            border-right-color: #4a4d54;
+        }
+    }
+
+    .torrent-list-layer {
+        border-top-color: @border;
+    }
+
+    div.torrent-list-layer tr:nth-child(even),
+    div.fl-layer tr:nth-child(even) {
+        background-color: @row-alt;
+    }
+
+    table tbody tr:hover,
+    table tbody tr.selected {
+        background-color: @accent !important;
+        color: #fff;
+    }
+
+    // row play/stop icons are black svgs: keep them light all the time
+    div.torrent-list-layer table td.actions div.btns > a {
+        filter: invert(100%);
+        opacity: 0.6;
+    }
+
+    div.torrent-list-layer table tr:hover td.actions div.btns > a,
+    div.torrent-list-layer table tr.selected td.actions div.btns > a {
+        opacity: 0.8;
+    }
+
+    table td.done .progress_b {
+        border-color: @bg;
+        background-color: #43464c;
+    }
+
+    // footer
+    .status-panel {
+        border-top-color: @border;
+    }
+
+    // file list overlay
+    div.file-list {
+        background: @surface;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+    }
+
+    div.fl-layer {
+        border-bottom-color: @border;
+    }
+
+    div.file-list div.bottom-menu {
+        input {
+            background-color: transparent;
+            color: @muted;
+            border: 0;
+        }
+
+        a {
+            border-color: transparent;
+
+            &:hover {
+                border-color: #5a5e66;
+            }
+        }
+    }
+
+    // dialogs
+    .nf-notifi {
+        background-color: @surface;
+        border-color: @border;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.6);
+        color: @text;
+
+        .nf-subItem label {
+            color: @text;
+        }
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    input[type="url"],
+    textarea,
+    select {
+        background-color: #1a1b1e;
+        color: @text;
+        border: 1px solid #4a4d54;
+        border-radius: 2px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    button {
+        background-color: #3a3d43;
+        color: @text;
+        border: 1px solid #555961;
+        border-radius: 3px;
+        padding: 2px 6px;
+
+        &:hover {
+            background-color: #45484f;
+        }
+    }
+
+    input[type="button"]:disabled,
+    input[type="submit"]:disabled,
+    button:disabled,
+    input.button:disabled {
+        opacity: 0.45;
+        cursor: default;
+        background-color: #3a3d43;
+        border-color: #555961;
+    }
+
+    // context menus
+    .react-contexify {
+        background: @surface;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+
+        .react-contexify__item__content {
+            color: @text;
+        }
+
+        .react-contexify__item:not(.react-contexify__item--disabled):hover > .react-contexify__item__content,
+        .react-contexify__item__content:hover {
+            color: #fff;
+        }
+
+        .react-contexify__item--disabled {
+            opacity: 0.45;
+        }
+
+        .react-contexify__separator {
+            border-bottom-color: @border;
+            background-color: @border;
+        }
+    }
+
+    // filter dropdown
+    .rc-select {
+        color: @text;
+
+        .rc-select-selection {
+            background-color: @surface;
+            border-color: #4a4d54;
+
+            &:hover {
+                border-color: #4a4d54;
+            }
+
+            &:focus {
+                border-color: #6a6e76;
+
+                .rc-select-arrow {
+                    border-left-color: #6a6e76;
+                }
+            }
+
+            .rc-select-arrow {
+                border-left-color: #4a4d54;
+            }
+        }
+    }
+
+    .rc-select-dropdown {
+        background-color: @surface;
+        border-color: #4a4d54;
+        color: @text;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
+        .rc-select-dropdown-menu .rc-select-dropdown-menu-item {
+            color: @text;
+
+            &:hover,
+            &.rc-select-dropdown-menu-item-active {
+                color: @text;
+                background-color: #3a3d43;
+            }
+
+            &.rc-select-dropdown-menu-item-selected {
+                color: #fff;
+            }
+        }
+
+        .rc-select-dropdown-menu-item-group-title {
+            color: @muted;
+            border-top-color: @border;
+        }
+    }
+
+    // tag chips
+    .tag {
+        color: hsl(var(--tag-hue, 210), 80%, 86%);
+        background-color: hsl(var(--tag-hue, 210), 35%, 26%);
+        border-color: hsl(var(--tag-hue, 210), 35%, 40%);
+
+        &:hover {
+            border-color: hsl(var(--tag-hue, 210), 55%, 62%);
+        }
+    }
+
+    div.torrent-list-layer table tbody tr:hover .tag,
+    div.torrent-list-layer table tbody tr.selected .tag {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    div.drop_layer {
+        background-color: rgba(0, 0, 0, 0.5);
+
+        &.dropped {
+            background-color: transparent;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+        background-color: @bg;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #4a4d54;
+        border-radius: 5px;
+        border: 2px solid @bg;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background-color: @bg;
+    }
+}

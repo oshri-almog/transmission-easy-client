@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Transmission easy client – harness</title>
+<style>
+  body { margin: 0; font: 13px Arial, sans-serif; background: #888; }
+  .bar { padding: 6px 10px; background: #222; color: #eee; }
+  .bar a { color: #9cf; margin-right: 12px; }
+  iframe { border: 0; background: transparent; display: block; }
+  #popup { width: 800px; height: 420px; margin: 10px; }
+  #bg { width: 0; height: 0; }
+</style>
+<script>
+  const params = new URLSearchParams(location.search);
+  window.__hub = {
+    storage: {
+      configVersion: 2,
+      hostname: 'localhost',
+      port: Number(location.port),
+      pathname: '/transmission/rpc',
+      authenticationRequired: false,
+      uiUpdateInterval: 2000,
+      theme: params.get('theme') || 'auto',
+    },
+    storageListeners: [],
+    legacy: params.get('legacy') === '1',
+    bgOnMessage: null,
+  };
+  if (window.__hub.legacy) {
+    // a column layout saved by the original 2.2.2 (no Tags column)
+    window.__hub.storage.torrentColumns = [
+      ['checkbox', 1, 0, 18], ['name', 1, 1, 204], ['order', 0, 1, 24], ['size', 1, 1, 68],
+      ['remaining', 0, 1, 64], ['done', 1, 1, 84], ['status', 1, 1, 86], ['seeds', 0, 1, 34],
+      ['peers', 0, 1, 34], ['seeds_peers', 1, 1, 44], ['downspd', 1, 1, 64], ['upspd', 1, 1, 64],
+      ['eta', 1, 1, 74], ['upped', 0, 1, 64], ['downloaded', 0, 1, 64], ['shared', 0, 1, 64],
+      ['added', 0, 1, 130], ['completed', 0, 1, 130], ['actions', 1, 0, 40],
+    ].map(([column, display, order, width]) => ({column, display, order, width}));
+  }
+</script>
+</head>
+<body>
+<div class="bar">
+  theme: <a href="?theme=light">light</a><a href="?theme=dark">dark</a><a href="?theme=auto">auto</a>
+  page: <a href="#" onclick="document.getElementById('popup').src='popup.html#popup';return false">popup</a>
+  <a href="#" onclick="document.getElementById('popup').src='options.html#/main';return false">options</a>
+</div>
+<iframe id="bg" src="bg.html"></iframe>
+<iframe id="popup"></iframe>
+<script>
+  // start the popup once the background frame has registered its message listener
+  const wait = () => window.__hub.bgOnMessage ? document.getElementById('popup').src = 'popup.html#popup' : setTimeout(wait, 50);
+  wait();
+</script>
+</body>
+</html>

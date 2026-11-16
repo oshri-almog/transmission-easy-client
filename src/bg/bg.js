@@ -242,6 +242,10 @@ class Bg {
         promise = this.client.rename(message.ids, message.path, message.name);
         break;
       }
+      case 'setLabels': {
+        promise = this.client.setLabels(message.ids, message.labels);
+        break;
+      }
       case 'torrentSetLocation': {
         promise = this.client.torrentSetLocation(message.ids, message.location);
         break;

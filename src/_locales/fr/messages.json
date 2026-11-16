@@ -310,9 +310,6 @@
         "originalKey": "DLG_RSSDOWNLOADER_35",
         "modifed": 1
     },
-
-
-
     "torrentAdded": {
         "message": "Le torrent a été ajouté !"
     },
@@ -514,5 +511,26 @@
     },
     "shortName": {
         "message": "Nom court"
+    },
+    "OV_COL_TAGS": {
+        "message": "Étiquettes"
+    },
+    "editTags": {
+        "message": "Étiquettes…"
+    },
+    "editTagsText": {
+        "message": "Étiquettes séparées par des virgules. Cliquez sur une étiquette ci-dessous pour l’ajouter ou la retirer."
+    },
+    "theme": {
+        "message": "Thème"
+    },
+    "themeAuto": {
+        "message": "Auto (selon le système)"
+    },
+    "themeLight": {
+        "message": "Clair"
+    },
+    "themeDark": {
+        "message": "Sombre"
     }
 }

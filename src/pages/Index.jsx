@@ -1,6 +1,8 @@
 import "react-contexify/dist/ReactContexify.min.css";
 import "rc-select/assets/index.css";
 import "../assets/css/stylesheet.less";
+import "../assets/css/tags.less";
+import "../assets/css/dark.less";
 import React from "react";
 import Menu from "../components/Menu";
 import {useObserver} from "mobx-react";
@@ -18,7 +20,9 @@ import getLogger from "../tools/getLogger";
 import RenameDialog from "../components/RenameDialog";
 import CopyMagnetUrlDialog from "../components/CopyMagnetUrlDialog";
 import MoveDialog from "../components/MoveDialog";
+import LabelsDialog from "../components/LabelsDialog";
 import RootStoreCtx from "../tools/RootStoreCtx";
+import applyTheme from "../tools/applyTheme";
 
 const logger = getLogger('Index');
 
@@ -138,6 +142,12 @@ const Dialogs = React.memo(() => {
           );
           break;
         }
+        case 'labels': {
+          dialogs.push(
+            <LabelsDialog key={dialog.id} dialogStore={dialog}/>
+          );
+          break;
+        }
       }
     });
 
@@ -174,6 +184,8 @@ GoInOptions.propTypes = {
 };
 
 const rootStore = window.rootStore = RootStore.create();
+
+applyTheme(rootStore);
 
 ReactDOM.render(
   <RootStoreCtx.Provider value={rootStore}>
